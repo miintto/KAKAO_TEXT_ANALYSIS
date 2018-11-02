@@ -1,4 +1,5 @@
 ### Ignore File ###
 
+**/.ipynb_checkpoints
 **/__pycashe__
 *.pyc
