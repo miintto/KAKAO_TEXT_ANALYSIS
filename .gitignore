@@ -1,0 +1,4 @@
+### Ignore File ###
+
+**/__pycashe__
+*.pyc
