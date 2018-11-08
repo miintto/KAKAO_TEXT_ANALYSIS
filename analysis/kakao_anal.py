@@ -5,7 +5,7 @@ from plotnine import *
 import matplotlib.font_manager as fm
 
 ### matplotlob에 한글 폰트 설정
-font = fm.FontProperties(fname='/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf', size=15)
+font = fm.FontProperties(fname='./analysis/fonts/NanumGothic.ttf', size=15)
 
 
 class KakaoAnal(BaseAnal):
