@@ -8,14 +8,20 @@ class BaseAnal(object):
     분석 시작전 대략적인 전처리 작업.
     카카오톡 채팅 파일 변환 및 분석 시작할 날짜부터 가공
     '''
-    def __init__(self, raw_text, types='Mobile'):
-        self.types = types
+    def __init__(self, raw_text):
         self.raw_text = raw_text
         self.user_names = []
         self.initialize()
         
+    def classify_type(self):
+        if self.raw_text[3]=='\n':
+            self.types = 'Mobile'
+        else:
+            self.types = 'PC'
+         
     def initialize(self):
         self.title = self.raw_text[0][:-1]
+        self.classify_type()
         if self.types=='Mobile':
             self.set_save_date_mobile()
             convert = Convertor(self.raw_text)
