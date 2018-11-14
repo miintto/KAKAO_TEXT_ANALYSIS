@@ -2,6 +2,11 @@ import datetime as dt
 
 
 class ConvertorPC(object):
+    '''
+    카카오톡 채팅 내용이 담긴 텍스트파일을 가공하여
+    시간, 이용자, 채팅내용이 담긴 dataframe형태로 변환
+    (PC버전만 유효)
+    '''
     def __init__(self, raw_text):
         self.raw_text = raw_text
         self.dat_chat = []
@@ -18,7 +23,14 @@ class ConvertorPC(object):
             datetime = self.date+' '+time
             return [datetime, name, line[split_2+5:]]
         except:
-            return [line, '', '']
+            return ['', '', line]
+        
+    def fix_table(self, data):
+        for i in range(1, len(data))[::-1]:
+            if not data[i][0]:
+                data[i-1][2] = data[i-1][2]+data[i][2]
+                del data[i]
+        del data[0]
         
     def convert_table(self):
         self.date = ''
@@ -28,3 +40,4 @@ class ConvertorPC(object):
                 self.date = dt.datetime.strftime(dt.datetime.strptime(date, "%Y년 %m월 %d일"), "%Y-%m-%d")
             except:
                 self.dat_chat.append(self.split_by(line))
+        self.fix_table(self.dat_chat)
