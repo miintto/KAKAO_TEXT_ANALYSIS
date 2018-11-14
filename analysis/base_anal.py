@@ -1,4 +1,5 @@
 from models.convert import Convertor
+from models.convert_pc import ConvertorPC
 import datetime as dt
 
 
@@ -12,19 +13,33 @@ class BaseAnal(object):
         self.user_names = []
         self.initialize()
         
+    def classify_type(self):
+        if self.raw_text[3]=='\n':
+            self.types = 'Mobile'
+        else:
+            self.types = 'PC'
+         
     def initialize(self):
         self.title = self.raw_text[0][:-1]
-        self.set_save_date()
-        convert = Convertor(self.raw_text)
+        self.classify_type()
+        if self.types=='Mobile':
+            self.set_save_date_mobile()
+            convert = Convertor(self.raw_text)
+        elif self.types=='PC':
+            self.set_save_date_PC()
+            convert = ConvertorPC(self.raw_text)
         self.dat_chat = convert.dat_chat
         self.find_start_line()
         self.find_names()
         self.sort_names()
         
-    def set_save_date(self):
+    def set_save_date_mobile(self):
         save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-1]
         save_date = save_date.replace('오전', 'AM').replace('오후', 'PM')
         self.save_date = dt.datetime.strftime(dt.datetime.strptime(save_date, "%Y년 %m월 %d일 %p %I:%M"), "%Y-%m-%d %H:%M")
+        
+    def set_save_date_PC(self):
+        self.save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-4]
         
     def find_start_line(self):
         start_line = -1
