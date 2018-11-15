@@ -1,4 +1,4 @@
-from analysis.base_anal import BaseAnal
+from  . import BaseAnal
 import pandas as pd
 import datetime as dt
 from plotnine import *

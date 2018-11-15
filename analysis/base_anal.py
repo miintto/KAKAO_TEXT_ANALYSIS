@@ -1,5 +1,4 @@
-from models.convert import Convertor
-from models.convert_pc import ConvertorPC
+from models import *
 import datetime as dt
 
 
