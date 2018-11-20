@@ -3,8 +3,8 @@ import datetime as dt
 
 class Convertor(object):
     '''
-    카카오톡 채팅 내용이 담긴 텍스트파일을 가공하여
-    시간, 이용자, 채팅내용이 담긴 dataframe형태로 변환
+    카카오톡 채팅 내용이 담긴 텍스트파일을 raw_text에 입력받아
+    dataframe 형태로 변환한 후, dat_chat 에 저장
     (모바일버전만 유효)
     '''
     def __init__(self, raw_text):
@@ -42,6 +42,10 @@ class Convertor(object):
         del data[0]
                     
     def convert_table(self):
+        '''
+        [datetime, name, chat]
+        dim : (N×3)
+        '''
         for line in self.raw_text:
             self.dat_chat.append(self.split_by(line))
         self.fix_table(self.dat_chat)

@@ -4,16 +4,17 @@ import datetime as dt
 from plotnine import *
 import matplotlib.font_manager as fm
 
-### matplotlob에 한글 폰트 설정
-font = fm.FontProperties(fname='./analysis/fonts/NanumGothic.ttf', size=15)
+### matplotlib에 한글 폰트 설정
+font = fm.FontProperties(fname='./analysis/fonts/NanumGothicBold.ttf', size=15)
 
 
 class KakaoAnal(BaseAnal):
-       
-    def chart_by_month_tile(self):
+    '''
+    가공된 Dataframe을 바탕으로 차트를 출력
+    '''
+    def chart_count_by_month(self):
         '''
-        월 x 이용자 별로 말풍선 개수를 계산
-        말풍선 개수는 매 달마다 이용자의 이름 개수를 count
+        월 별로 이용자의 말풍선 개수를 출력
         '''
         Month = [] ### 월별 간격 계산
         Month_idx = []
@@ -43,7 +44,10 @@ class KakaoAnal(BaseAnal):
                 theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
     
-    def chart_by_month_rate(self):
+    def chart_count_by_month_rate(self):
+        '''
+        월 별로 이용자의 말풍선 비율을 출력
+        '''
         Month = [] ### 월별 간격 계산
         Month_idx = []
         for i in range(len(self.dat_chat)):
@@ -73,7 +77,7 @@ class KakaoAnal(BaseAnal):
 
     def chart_pie(self):
         '''
-        이용자별 톡방 점유율
+        이용자별 톡방 점유율 출력
         (0 ~ 100, 단위 : %)
         '''
         dat_per = [i/sum(self.user_chat)*100 for i in self.user_chat]
@@ -90,7 +94,10 @@ class KakaoAnal(BaseAnal):
                 theme(figure_size = (7, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
 
-    def chart_weekdays(self):
+    def chart_count_by_weekdays(self):
+        '''
+        요일×시간 별 말풍선 개수 출력
+        '''
         week_days=[]
         for line in self.dat_chat:
             week_days.append(dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')))
@@ -117,7 +124,11 @@ class KakaoAnal(BaseAnal):
                 theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
     
-    def chart_weekdays_by_user(self):
+    def chart_count_by_weekdays_by_user(self):
+        '''
+        원하는 이용자를 입력받아서
+        요일×시간 별 말풍선 개수 출력
+        '''
         user_check = False
         print('[이름을 입력하시오]')
         while(not user_check):

@@ -4,20 +4,15 @@ import datetime as dt
 
 class BaseAnal(object):
     '''
-    분석 시작전 대략적인 전처리 작업.
-    카카오톡 채팅 파일 변환 및 분석 시작할 날짜부터 가공
+    분석을 시작하기 전 Dataframe을 전처리
+    raw_text에 원본 텍스트파일을 입력받아 
+    Dateframe형태로 가공 후 dat_chat에 저장
     '''
     def __init__(self, raw_text):
         self.raw_text = raw_text
         self.user_names = []
         self.initialize()
         
-    def classify_type(self):
-        if self.raw_text[3]=='\n':
-            self.types = 'Mobile'
-        else:
-            self.types = 'PC'
-         
     def initialize(self):
         self.title = self.raw_text[0][:-1]
         self.classify_type()
@@ -32,6 +27,15 @@ class BaseAnal(object):
         self.find_names()
         self.sort_names()
         
+    def classify_type(self):
+        '''
+        모바일 버전인지 PC버전인지 판별
+        '''
+        if self.raw_text[3]=='\n':
+            self.types = 'Mobile'
+        else:
+            self.types = 'PC'
+        
     def set_save_date_mobile(self):
         save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-1]
         save_date = save_date.replace('오전', 'AM').replace('오후', 'PM')
@@ -41,6 +45,9 @@ class BaseAnal(object):
         self.save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-4]
         
     def find_start_line(self):
+        '''
+        분석을 시작할 날짜를 입력받아서 해당 날짜부터 가공
+        '''
         start_line = -1
         print('[시작할 날짜를 입력해주십시오. (ex. 2018-01-01)]')
         while(start_line == -1):
@@ -54,6 +61,9 @@ class BaseAnal(object):
         self.dat_chat = self.dat_chat[start_line:]
             
     def find_names(self):
+        '''
+        사용자의 이름 가져오기
+        '''
         names = []
         for line in self.dat_chat:
             names.append(line[1])
@@ -66,6 +76,9 @@ class BaseAnal(object):
             pass
         
     def sort_names(self):
+        '''
+        사용자 이름을 전체 말풍선개수 순으로 sorting
+        '''
         names = []
         for i in range(len(self.dat_chat)):
             names.append(self.dat_chat[i][1])
