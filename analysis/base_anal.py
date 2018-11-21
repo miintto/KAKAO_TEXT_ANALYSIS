@@ -16,13 +16,7 @@ class BaseAnal(object):
     def initialize(self):
         self.title = self.raw_text[0][:-1]
         self.classify_type()
-        if self.types=='Mobile':
-            self.set_save_date_mobile()
-            convert = Convertor(self.raw_text)
-        elif self.types=='PC':
-            self.set_save_date_PC()
-            convert = ConvertorPC(self.raw_text)
-        self.dat_chat = convert.dat_chat
+        self.convert()
         self.find_start_line()
         self.find_names()
         self.sort_names()
@@ -35,6 +29,15 @@ class BaseAnal(object):
             self.types = 'Mobile'
         else:
             self.types = 'PC'
+
+    def convert(self):
+        if self.types=='Mobile':
+            self.set_save_date_mobile()
+            convert = Convertor(self.raw_text)
+        elif self.types=='PC':
+            self.set_save_date_PC()
+            convert = ConvertorPC(self.raw_text)
+        self.dat_chat = convert.dat_chat
         
     def set_save_date_mobile(self):
         save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-1]
