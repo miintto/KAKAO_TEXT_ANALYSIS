@@ -1,3 +1,5 @@
+import os
+import inspect
 from  . import BaseAnal
 import pandas as pd
 import datetime as dt
@@ -5,7 +7,8 @@ from plotnine import *
 import matplotlib.font_manager as fm
 
 ### matplotlib에 한글 폰트 설정
-font = fm.FontProperties(fname='./analysis/fonts/NanumGothicBold.ttf', size=15)
+fpath = os.path.dirname(inspect.getabsfile(BaseAnal))+'/fonts/NanumGothicBold.ttf'
+font = fm.FontProperties(fname=fpath, size=15)
 
 
 class KakaoAnal(BaseAnal):
