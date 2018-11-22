@@ -9,6 +9,8 @@
 pip install pandas #dataframe 가공 및 편집
 pip install plotnine #그래픽 출력
 ~~~
+  pandas : <https://pandas.pydata.org>  
+  plotnine : <https://plotnine.readthedocs.io/en/stable/>
 
 ## 2. 예제
 ### 2.1 패키지 및 텍스트 파일 불러오기
@@ -35,9 +37,9 @@ Text = f.readlines()
 ...]
 ```
 
-### 2.2 분석 시작할 날짜 입력
+### 2.2 텍스트 파일 가공
 패키지에 포함된 KakaoAnal을 불러와서 다음 코드를 실행합니다.  
-텍스트파일을 dataframe형태로 바꾸어 가공하기 쉽게 만드는 작업입니다.
+텍스트파일을 벡터 형태로 변환하는 작업입니다.
 ~~~python
 kakao = KakaoAnal(Text)
 ~~~
