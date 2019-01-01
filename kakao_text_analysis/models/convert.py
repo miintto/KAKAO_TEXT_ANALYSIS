@@ -28,18 +28,18 @@ class Convertor(object):
         if date == '':  ### 날짜가 없는 경우 -> 윗줄의 유저의 말풍선
             return ['', '', line]
         elif split_1 == -1:  ### ,가 없는 경우 -> 매 날짜 시작일
-            return [date, '', '']
+            return ['', '', '']
         elif split_2 == -1:  ###
             return [date, '', line[(split_1+2):]]
         else:
             return [date, name, chat]
         
-    def fix_table(self, data):
-        for i in range(1, len(data))[::-1]:
-            if not data[i][0]:
-                data[i-1][2] = data[i-1][2]+data[i][2]
-                del data[i]
-        del data[0]
+    def fix_table(self):
+        for i in range(1, len(self.dat_chat))[::-1]:
+            if not self.dat_chat[i][0]:
+                self.dat_chat[i-1][2] = self.dat_chat[i-1][2]+self.dat_chat[i][2]
+                del self.dat_chat[i]
+        del self.dat_chat[0]
                     
     def convert_table(self):
         '''
@@ -48,4 +48,4 @@ class Convertor(object):
         '''
         for line in self.raw_text:
             self.dat_chat.append(self.split_by(line))
-        self.fix_table(self.dat_chat)
+        self.fix_table()
