@@ -19,21 +19,16 @@ class KakaoAnal(BaseAnal):
         '''
         월 별로 이용자의 말풍선 개수를 출력
         '''
-        Month = [] ### 월별 간격 계산
-        Month_idx = []
-        for i in range(len(self.dat_chat)):
-            if not self.dat_chat[i][0][0:7] in Month:
-                Month.append(self.dat_chat[i][0][0:7])
-                Month_idx.append(i)
-                
-        Month_idx.append(len(self.dat_chat))
-        dat_month_chat = [] ### 월별 채팅 계산
-        for j in range(len(Month)):
-            names = []
-            for i in range(Month_idx[j], Month_idx[j+1]):
-                names.append(self.dat_chat[i][1])
+        Month = []
+        for date, _, _ in self.dat_chat:
+            if date[:7] not in Month:
+                Month.append(date[:7])
+
+        dat_month_chat = []
+        for month in Month:
+            names_by_month = [name for date, name, _ in self.dat_chat if month in date]
             for name in self.user_names:
-                dat_month_chat.append([name, Month[j], names.count(name)])
+                dat_month_chat.append([name, month, names_by_month.count(name)])
 
         dat_month_chat = pd.DataFrame(dat_month_chat)
         dat_month_chat.columns = ['Name', 'Month', 'Chat']
@@ -51,22 +46,17 @@ class KakaoAnal(BaseAnal):
         '''
         월 별로 이용자의 말풍선 비율을 출력
         '''
-        Month = [] ### 월별 간격 계산
-        Month_idx = []
-        for i in range(len(self.dat_chat)):
-            if not self.dat_chat[i][0][0:7] in Month:
-                Month.append(self.dat_chat[i][0][0:7])
-                Month_idx.append(i)
-                
-        Month_idx.append(len(self.dat_chat))
-        dat_month_chat = [] ### 월별 채팅 계산
-        for j in range(len(Month)):
-            names = []
-            for i in range(Month_idx[j], Month_idx[j+1]):
-                names.append(self.dat_chat[i][1])
-            for name in self.user_names:
-                dat_month_chat.append([name, Month[j], names.count(name)])
+        Month = []
+        for date, _, _ in self.dat_chat:
+            if date[:7] not in Month:
+                Month.append(date[:7])
 
+        dat_month_chat = []
+        for month in Month:
+            names_by_month = [name for date, name, _ in self.dat_chat if month in date]
+            for name in self.user_names:
+                dat_month_chat.append([name, month, names_by_month.count(name)])
+   
         dat_month_chat = pd.DataFrame(dat_month_chat)
         dat_month_chat.columns = ['Name', 'Month', 'Chat']
         dat_month_chat['Name'] = pd.Categorical(dat_month_chat['Name'], categories=self.user_names[::-1], ordered=True)
