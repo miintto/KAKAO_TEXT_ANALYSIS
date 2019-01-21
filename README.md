@@ -7,49 +7,32 @@
 * 다음 라이브러리 설치가 요구됩니다.
 ~~~
 pip install pandas #dataframe 가공 및 편집
-pip install plotnine #그래픽 출력
+pip install plotnine #그래프 생성
+apt-get install python-tk #그래픽 출력
 ~~~
   pandas : <https://pandas.pydata.org>  
-  plotnine : <https://plotnine.readthedocs.io/en/stable/>
+  plotnine : <https://plotnine.readthedocs.io/en/stable/>  
+  tkinter : <https://tkdocs.com/index.html>
 
 ## 2. 예제
 ### 2.1 패키지 및 텍스트 파일 불러오기
-먼저 패키지를 실행하고, 카카오톡 대화 내용이 담긴 텍스트 파일을 불러옵니다.
-~~~python
-### 패키지 실행
-from kakao_text_analysis import *
-
-### 텍스트파일 불러오기
-f = open('/home/user/KakaoTalkChats.txt', 'r', encoding='utf-8-sig')
-Text = f.readlines()
+먼저 메인 프로그램을 실행합니다.
 ~~~
-텍스트 파일은 다음과 같이 한 줄 마다 읽어서 저장됩니다.
-```
-['단톡방 10 카카오톡 대화\n',
- '저장한 날짜 : 2018년 10월 28일 오후 6:52\n',
-'\n',
-'\n',
-'2017년 4월 15일 오후 9:11\n',
-'2017년 4월 15일 오후 9:11, 초롱초롱 무지님이 하트뿅뿅 라이언님을 초대했습니다.\n',
-'2017년 4월 15일 오후 9:12, 초롱초롱 무지 : .\n',
-'2017년 4월 15일 오후 9:17, 귀여운 프로도 : 배고프다\n',
-'2017년 4월 15일 오후 9:17, 귀여운 프로도 : 맘터가실분?\n',
-...]
-```
-
-### 2.2 텍스트 파일 가공
-패키지에 포함된 KakaoAnal을 불러와서 다음 코드를 실행합니다.  
-텍스트파일을 벡터 형태로 변환하는 작업입니다.
-~~~python
-kakao = KakaoAnal(Text)
+python3 main.py
+...
+카카오톡 텍스트 파일의 경로를 입력해주세요 
+ : 
 ~~~
-실행시키면 아래와 같은 문장이 나오는데, 분석을 시작할 날짜를 입력합니다.
+위와 같은 창이 뜨면 카카오톡 대화 내용이 담긴 텍스트 파일의 경로를 입력합니다.  
+ex) /home/minjae/다운로드/KakaoTalkChats(3).txt 
+
 ~~~ 
 [시작할 날짜를 입력해주십시오. (ex. 2018-01-01)]  
 ~~~
+그 후 분석을 시작할 날짜를 입력합니다.
 
 
-### 2.3 차트 출력
+### 2.2 차트 출력
 * 월별 이용자 채팅
 ~~~python
 kakao.chart_count_by_month()
