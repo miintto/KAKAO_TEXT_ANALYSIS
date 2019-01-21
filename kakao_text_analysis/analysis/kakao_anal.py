@@ -15,6 +15,10 @@ class KakaoAnal(BaseAnal):
     '''
     가공된 Dataframe을 바탕으로 차트를 출력
     '''
+    def __init__(self, raw_text):
+        self.raw_text = raw_text
+        super().__init__(raw_text)
+
     def chart_count_by_month(self):
         '''
         월 별로 이용자의 말풍선 개수를 출력
