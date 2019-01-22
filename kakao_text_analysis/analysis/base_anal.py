@@ -19,9 +19,6 @@ class BaseAnal:
         self.title = self.raw_text[0][:-1]
         self.classify_type()
         self.convert()
-        self.find_start_line()
-        self.find_names()
-        self.sort_names()
         
     def classify_type(self):
         '''
@@ -48,22 +45,7 @@ class BaseAnal:
         
     def set_save_date_PC(self):
         self.save_date = self.raw_text[1][(self.raw_text[1].find(':')+2):-4]
-        
-    def find_start_line(self):
-        '''
-        분석을 시작할 날짜를 입력받아서 해당 날짜부터 가공
-        '''
-        start_line = -1
-        print('[시작할 날짜를 입력해주십시오. (ex. 2018-01-01)]')
-        while(start_line == -1):
-            start_date = input()
-            for i in range(len(self.dat_chat)):
-                if start_date in self.dat_chat[i][0][0:10]:
-                    start_line = i
-                    break
-            if start_line == -1:
-                print('[날짜를 찾을 수 없습니다. 다시 한번 입력해주십시오.]')
-        self.dat_chat = self.dat_chat[start_line:]
+
             
     def find_names(self):
         '''
