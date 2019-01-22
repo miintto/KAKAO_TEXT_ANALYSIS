@@ -10,7 +10,7 @@ import matplotlib.font_manager as fm
 
 ### matplotlib에 한글 폰트 설정
 fpath = os.path.dirname(inspect.getabsfile(BaseAnal))+'/fonts/NanumGothicBold.ttf'
-font = fm.FontProperties(fname=fpath, size=15)
+font = fm.FontProperties(fname=fpath, size=12)
 
 
 class KakaoAnal(BaseAnal):
@@ -45,7 +45,7 @@ class KakaoAnal(BaseAnal):
                 geom_text(aes('Month', 'Name', label = 'Chat'))+
                 ggtitle('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
-                theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
+                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
     
     def chart_count_by_month_rate(self):
@@ -71,7 +71,7 @@ class KakaoAnal(BaseAnal):
                 geom_bar(aes('Month', 'Chat', fill='Name'), stat = 'identity', position = 'fill')+
                 ggtitle('월별 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
                 scale_fill_brewer(type='qual', palette="Set3")+
-                theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
+                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
 
     def chart_pie(self):
@@ -90,7 +90,7 @@ class KakaoAnal(BaseAnal):
                 geom_text(aes('0', 'Per_ctr', label = 'Per'))+
                 ggtitle('잉여력 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
                 scale_fill_brewer(type='qual', palette="Set3")+
-                theme(figure_size = (7, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
+                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
 
     def chart_count_by_weekdays(self):
@@ -120,7 +120,7 @@ class KakaoAnal(BaseAnal):
                 geom_text(aes('Hours', 'Weekdays', label = 'Chats'))+
                 ggtitle('요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
-                theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
+                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
     
     def chart_count_by_weekdays_by_user(self):
@@ -161,5 +161,5 @@ class KakaoAnal(BaseAnal):
                 geom_text(aes('Hours', 'Weekdays', label = 'Chats'))+
                 ggtitle('"'+user_name+'" 이용자의 요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
-                theme(figure_size = (15, 7), plot_title = element_text(size=20), text = element_text(fontproperties=font))
+                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
