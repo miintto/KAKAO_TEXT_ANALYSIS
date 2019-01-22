@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from ..models import *
 import datetime as dt
 
 
-class BaseAnal(object):
+class BaseAnal:
     '''
     분석을 시작하기 전 Dataframe을 전처리
     raw_text에 원본 텍스트파일을 입력받아 
