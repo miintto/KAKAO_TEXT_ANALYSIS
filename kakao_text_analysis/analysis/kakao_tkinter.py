@@ -9,6 +9,7 @@ class KakaoTkinter:
     def __init__(self, root):
         self.root = root
         self.is_open_text_file = False
+        self.is_find_date = False
         self.run()
         
     def run(self):
@@ -21,9 +22,9 @@ class KakaoTkinter:
         self.label_0 = Label(self.root, text = 'Kakao Talk 대화 분석', height=2)
         self.label_0.config(font=('', 20))
         self.label_0.grid(row=0, column=1)
-        self.label_blk0 = Label(self.root, text = '', width=10)
+        self.label_blk0 = Label(self.root, text = '', width=8)
         self.label_blk0.grid(row=0, column=0)
-        self.label_blk1 = Label(self.root, text = '', width=10)
+        self.label_blk1 = Label(self.root, text = '', width=8)
         self.label_blk1.grid(row=0, column=2)
 
         self.label_1 = Label(self.root, text = '텍스트 파일 경로 : ')
@@ -70,8 +71,8 @@ class KakaoTkinter:
             messagebox.showinfo('Error', '파일을 열 수 없습니다.')
 
     def analysis(self):
-        if self.is_open_text_file == False:
-            messagebox.showinfo('Error', '먼저 파일을 열어주세요.')
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
         else:
             self.kakao = KakaoAnal(self.raw_text)
             start_line = -1
@@ -83,19 +84,40 @@ class KakaoTkinter:
             if start_line == -1:
                 messagebox.showinfo('Error', '해당 날짜를 찾을 수 없습니다.')
             else:
+                self.is_find_date = True
                 self.kakao.dat_chat = self.kakao.dat_chat[start_line:]
                 self.kakao.find_names()
                 self.kakao.sort_names()
                 self.label_3.configure(text='시작할 날짜 :  - 분석 완료!')
 
     def chart_count_by_month(self):
-        return self.kakao.chart_count_by_month()
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.chart_count_by_month()
 
     def chart_count_by_month_rate(self):
-        return self.kakao.chart_count_by_month_rate()
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.chart_count_by_month_rate()
 
     def chart_pie(self):
-        return self.kakao.chart_pie()
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.chart_pie()
 
     def chart_count_by_weekdays(self):
-        return self.kakao.chart_count_by_weekdays()
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.chart_count_by_weekdays()
