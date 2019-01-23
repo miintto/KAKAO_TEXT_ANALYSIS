@@ -33,12 +33,12 @@ class KakaoAnal(BaseAnal):
             month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
             dat_month_chat.append([month_by_name.count(month) for month in Month])
 
-        fig, ax = plt.subplots(figsize = (12, 5))
+        fig, ax = plt.subplots(figsize = (10, 5))
         ax.imshow(dat_month_chat, cmap='GnBu')
 
         ax.set_xticks(range(len(Month)))
         ax.set_yticks(range(len(self.user_names)))
-        ax.set_xticklabels([str(month[5:])+'월' for month in Month], fontproperties=font)
+        ax.set_xticklabels([str(month[2:]) for month in Month])
         ax.set_yticklabels(self.user_names, fontproperties=font)
 
         for i in range(len(self.user_names)):
@@ -60,23 +60,33 @@ class KakaoAnal(BaseAnal):
         for date, _, _ in self.dat_chat:
             if date[:7] not in Month:
                 Month.append(date[:7])
-
         dat_month_chat = []
-        for month in Month:
-            names_by_month = [name for date, name, _ in self.dat_chat if month in date]
-            for name in self.user_names:
-                dat_month_chat.append([name, month, names_by_month.count(name)])
-   
-        dat_month_chat = pd.DataFrame(dat_month_chat)
-        dat_month_chat.columns = ['Name', 'Month', 'Chat']
-        dat_month_chat['Name'] = pd.Categorical(dat_month_chat['Name'], categories=self.user_names[::-1], ordered=True)
-        
-        return (ggplot(dat_month_chat)+
-                geom_bar(aes('Month', 'Chat', fill='Name'), stat = 'identity', position = 'fill')+
-                ggtitle('월별 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
-                scale_fill_brewer(type='qual', palette="Set3")+
-                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
-               )
+        for user_name in self.user_names:
+            month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
+            dat_month_chat.append([month_by_name.count(month) for month in Month])
+            
+        sum_by_month = [sum(dat_month_chat[i][j] for i in range(len(self.user_names))) for j in range(len(Month))]
+        dat_per = []
+        for j in range(len(self.user_names)):
+            dat_per.append([dat_month_chat[j][i] / sum_by_month[i] * 100 for i in range(len(Month))])
+
+        cmap = plt.get_cmap("Set3")
+        colors = cmap(range(len(self.user_names)))
+        x = [str(month[2:]) for month in Month]
+
+        fig, ax = plt.subplots(figsize = (10, 5))
+        ax.stackplot(x, dat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+
+        chartBox = ax.get_position()
+        ax.set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
+        handles, labels = ax.get_legend_handles_labels()
+        plt.legend(reversed(handles), reversed(labels), prop=font, loc='center', bbox_to_anchor=(1.1, 0.5))
+
+        for edge, spine in ax.spines.items():
+            spine.set_visible(False)
+
+        ax.set_title('월별 이용자 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        plt.show()
 
 
     def chart_pie(self):
@@ -87,7 +97,7 @@ class KakaoAnal(BaseAnal):
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.user_names)))
 
-        fig, ax = plt.subplots(figsize = (12, 5))
+        fig, ax = plt.subplots(figsize = (10, 5))
         wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
         plt.setp(texts, fontproperties=font)
         ax.set_title('점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
