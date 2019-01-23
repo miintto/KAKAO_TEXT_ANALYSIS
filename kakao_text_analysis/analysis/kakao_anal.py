@@ -6,11 +6,12 @@ from  . import BaseAnal
 import pandas as pd
 import datetime as dt
 from plotnine import *
+import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
 ### matplotlib에 한글 폰트 설정
 fpath = os.path.dirname(inspect.getabsfile(BaseAnal))+'/fonts/NanumGothicBold.ttf'
-font = fm.FontProperties(fname=fpath, size=12)
+font = fm.FontProperties(fname=fpath, size=10)
 
 
 class KakaoAnal(BaseAnal):
@@ -18,8 +19,8 @@ class KakaoAnal(BaseAnal):
     가공된 Dataframe을 바탕으로 차트를 출력
     '''
     def __init__(self, raw_text):
-        self.raw_text = raw_text
         super().__init__(raw_text)
+
 
     def chart_count_by_month(self):
         '''
@@ -29,25 +30,29 @@ class KakaoAnal(BaseAnal):
         for date, _, _ in self.dat_chat:
             if date[:7] not in Month:
                 Month.append(date[:7])
-
         dat_month_chat = []
-        for month in Month:
-            names_by_month = [name for date, name, _ in self.dat_chat if month in date]
-            for name in self.user_names:
-                dat_month_chat.append([name, month, names_by_month.count(name)])
+        for user_name in self.user_names:
+            month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
+            dat_month_chat.append([month_by_name.count(month) for month in Month])
 
-        dat_month_chat = pd.DataFrame(dat_month_chat)
-        dat_month_chat.columns = ['Name', 'Month', 'Chat']
-        dat_month_chat['Name'] = pd.Categorical(dat_month_chat['Name'], categories=self.user_names, ordered=True)
-        
-        return (ggplot(dat_month_chat)+
-                geom_tile(aes('Month', 'Name', fill = 'Chat'))+
-                geom_text(aes('Month', 'Name', label = 'Chat'))+
-                ggtitle('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
-                scale_fill_gradient2(high = 'steelblue', low = 'white')+
-                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
-               )
+        fig, ax = plt.subplots(figsize = (12, 5))
+        ax.imshow(dat_month_chat, cmap='GnBu')
+
+        ax.set_xticks(range(len(Month)))
+        ax.set_yticks(range(len(self.user_names)))
+        ax.set_xticklabels([str(month[5:])+'월' for month in Month], fontproperties=font)
+        ax.set_yticklabels(self.user_names, fontproperties=font)
+
+        for i in range(len(self.user_names)):
+            for j in range(len(Month)):
+                text = ax.text(j, i, dat_month_chat[i][j], ha="center", va="center", color="black", fontproperties=font)
+
+        for edge, spine in ax.spines.items():
+            spine.set_visible(False)
+        ax.set_title('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        plt.show()
     
+
     def chart_count_by_month_rate(self):
         '''
         월 별로 이용자의 말풍선 비율을 출력
@@ -74,6 +79,7 @@ class KakaoAnal(BaseAnal):
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
 
+
     def chart_pie(self):
         '''
         이용자별 톡방 점유율 출력
@@ -92,6 +98,7 @@ class KakaoAnal(BaseAnal):
                 scale_fill_brewer(type='qual', palette="Set3")+
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
+
 
     def chart_count_by_weekdays(self):
         '''
@@ -122,6 +129,7 @@ class KakaoAnal(BaseAnal):
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
+    
     
     def chart_count_by_weekdays_by_user(self):
         '''
