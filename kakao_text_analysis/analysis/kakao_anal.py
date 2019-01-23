@@ -3,9 +3,7 @@
 import os
 import inspect
 from  . import BaseAnal
-import pandas as pd
 import datetime as dt
-from plotnine import *
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
@@ -49,9 +47,10 @@ class KakaoAnal(BaseAnal):
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
+
         ax.set_title('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
         plt.show()
-    
+
 
     def chart_count_by_month_rate(self):
         '''
@@ -85,19 +84,15 @@ class KakaoAnal(BaseAnal):
         이용자별 톡방 점유율 출력
         (0 ~ 100, 단위 : %)
         '''
-        dat_per = [i/sum(self.user_chat)*100 for i in self.user_chat]
-        dat_user_chat = pd.DataFrame({'Name':self.user_names, 'Per':dat_per})
-        dat_user_chat['Per'] = dat_user_chat['Per'].round(2)
-        dat_user_chat['Per_ctr'] = pd.Series.cumsum(dat_user_chat['Per'])-dat_user_chat['Per']/2
-        dat_user_chat['Name'] = pd.Categorical(dat_user_chat['Name'], categories=self.user_names[::-1], ordered=True)
+        cmap = plt.get_cmap("Set3")
+        colors = cmap(range(len(self.user_names)))
 
-        return (ggplot(dat_user_chat)+
-                geom_bar(aes('0', 'Per', fill = 'Name'), stat = 'identity')+
-                geom_text(aes('0', 'Per_ctr', label = 'Per'))+
-                ggtitle('잉여력 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
-                scale_fill_brewer(type='qual', palette="Set3")+
-                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
-               )
+        fig, ax = plt.subplots(figsize = (12, 5))
+        wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
+        plt.setp(texts, fontproperties=font)
+        ax.set_title('점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+
+        plt.show()
 
 
     def chart_count_by_weekdays(self):

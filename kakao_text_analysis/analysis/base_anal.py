@@ -73,6 +73,6 @@ class BaseAnal:
         for name in self.user_names:
             user_chat.append(names.count(name))
         self.user_names = sorted(self.user_names, key = lambda i : user_chat[self.user_names.index(i)], reverse=True)
-        user_chat.sort()
+        user_chat.sort(reverse=True)
         self.user_chat = user_chat
      
