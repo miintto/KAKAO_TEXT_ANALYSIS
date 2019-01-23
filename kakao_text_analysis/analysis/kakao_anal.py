@@ -43,7 +43,7 @@ class KakaoAnal(BaseAnal):
 
         for i in range(len(self.user_names)):
             for j in range(len(Month)):
-                text = ax.text(j, i, dat_month_chat[i][j], ha="center", va="center", color="black", fontproperties=font)
+                text = ax.text(j, i, dat_month_chat[i][j], ha="center", va="center", color="black")
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
@@ -64,7 +64,7 @@ class KakaoAnal(BaseAnal):
         for user_name in self.user_names:
             month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
             dat_month_chat.append([month_by_name.count(month) for month in Month])
-            
+
         sum_by_month = [sum(dat_month_chat[i][j] for i in range(len(self.user_names))) for j in range(len(Month))]
         dat_per = []
         for j in range(len(self.user_names)):
@@ -100,8 +100,8 @@ class KakaoAnal(BaseAnal):
         fig, ax = plt.subplots(figsize = (10, 5))
         wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
         plt.setp(texts, fontproperties=font)
-        ax.set_title('점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
 
+        ax.set_title('점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
         plt.show()
 
 
@@ -109,33 +109,40 @@ class KakaoAnal(BaseAnal):
         '''
         요일×시간 별 말풍선 개수 출력
         '''
+        wkdays = ['월', '화', '수', '목', '금', '토', '일']
+        hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
+
         week_days=[]
         for line in self.dat_chat:
             week_days.append(dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')))
+
         dat_by_wkday = []
         for j in range(7):
             time_set = []
             for i in range(len(self.dat_chat)):
                 if week_days[i] == j:
                     time_set.append(self.dat_chat[i][0][11:13])
-            wkdays = ['월', '화', '수', '목', '금', '토', '일']
-            hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
-            for hour in hours:
-                dat_by_wkday.append([wkdays[j], hour, time_set.count(hour)])
+            dat_by_wkday.append([time_set.count(hour) for hour in hours])
 
-        dat_by_wkday = pd.DataFrame(dat_by_wkday)
-        dat_by_wkday.columns = ['Weekdays', 'Hours', 'Chats']
-        dat_by_wkday['Weekdays'] = pd.Categorical(dat_by_wkday['Weekdays'], categories=wkdays, ordered=True)
-        
-        return (ggplot(dat_by_wkday)+
-                geom_tile(aes('Hours', 'Weekdays', fill = 'Chats'))+
-                geom_text(aes('Hours', 'Weekdays', label = 'Chats'))+
-                ggtitle('요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
-                scale_fill_gradient2(high = 'steelblue', low = 'white')+
-                theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
-               )
-    
-    
+        fig, ax = plt.subplots(figsize = (10, 5))
+        ax.imshow(dat_by_wkday, cmap='GnBu')
+
+        ax.set_xticks(range(len(hours)))
+        ax.set_yticks(range(7))
+        ax.set_xticklabels(hours)
+        ax.set_yticklabels(wkdays, fontproperties=font)
+
+        for i in range(7):
+            for j in range(len(hours)):
+                text = ax.text(j, i, dat_by_wkday[i][j], ha="center", va="center", color="black")
+
+        for edge, spine in ax.spines.items():
+            spine.set_visible(False)
+
+        ax.set_title('요일 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        plt.show()
+
+
     def chart_count_by_weekdays_by_user(self):
         '''
         원하는 이용자를 입력받아서
