@@ -55,8 +55,10 @@ class KakaoTkinter:
         self.buttun_4.grid(row=11, column=1)
         self.buttun_5 = Button(self.root, text = '요일 시간별 채팅', width=25, command = self.chart_count_by_weekdays)
         self.buttun_5.grid(row=12, column=1)
+        self.buttun_6 = Button(self.root, text = '종합 분석', width=25, command = self.chart_all)
+        self.buttun_6.grid(row=13, column=1)
         self.label_blk2 = Label(self.root, text = '', height=2)
-        self.label_blk2.grid(row=13, column=2)
+        self.label_blk2.grid(row=14, column=2)
 
         self.root.mainloop()
     
@@ -88,6 +90,7 @@ class KakaoTkinter:
                 self.kakao.dat_chat = self.kakao.dat_chat[start_line:]
                 self.kakao.find_names()
                 self.kakao.sort_names()
+                self.kakao.analysis()
                 self.label_3.configure(text='시작할 날짜 :  - 분석 완료!')
 
     def chart_count_by_month(self):
@@ -121,3 +124,11 @@ class KakaoTkinter:
             messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
         else:
             return self.kakao.chart_count_by_weekdays()
+
+    def chart_all(self):
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.chart_all()

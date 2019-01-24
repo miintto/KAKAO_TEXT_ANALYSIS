@@ -20,30 +20,56 @@ class KakaoAnal(BaseAnal):
         super().__init__(raw_text)
 
 
-    def chart_count_by_month(self):
-        '''
-        월 별로 이용자의 말풍선 개수를 출력
-        '''
+    def analysis(self):
         Month = []
         for date, _, _ in self.dat_chat:
             if date[:7] not in Month:
                 Month.append(date[:7])
+        self.Month = Month
+
         dat_month_chat = []
         for user_name in self.user_names:
             month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
             dat_month_chat.append([month_by_name.count(month) for month in Month])
+        self.dat_month_chat = dat_month_chat
 
+        sum_by_month = [sum(dat_month_chat[i][j] for i in range(len(self.user_names))) for j in range(len(Month))]
+        dat_month_chat_per = []
+        for j in range(len(self.user_names)):
+            dat_month_chat_per.append([dat_month_chat[j][i] / sum_by_month[i] * 100 for i in range(len(Month))])
+        self.dat_month_chat_per = dat_month_chat_per
+
+        wkdays = ['월', '화', '수', '목', '금', '토', '일']
+        hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
+        week_days=[]
+        for line in self.dat_chat:
+            week_days.append(dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')))
+
+        dat_by_wkday = []
+        for j in range(7):
+            time_set = []
+            for i in range(len(self.dat_chat)):
+                if week_days[i] == j:
+                    time_set.append(self.dat_chat[i][0][11:13])
+            dat_by_wkday.append([time_set.count(hour) for hour in hours])
+        self.dat_by_wkday = dat_by_wkday
+
+
+    def chart_count_by_month(self):
+        '''
+        월 별로 이용자의 말풍선 개수를 출력
+        '''
         fig, ax = plt.subplots(figsize = (10, 5))
-        ax.imshow(dat_month_chat, cmap='GnBu')
+        ax.imshow(self.dat_month_chat, cmap='GnBu')
 
-        ax.set_xticks(range(len(Month)))
+        ax.set_xticks(range(len(self.Month)))
         ax.set_yticks(range(len(self.user_names)))
-        ax.set_xticklabels([str(month[2:]) for month in Month])
+        ax.set_xticklabels([str(month[2:]) for month in self.Month])
         ax.set_yticklabels(self.user_names, fontproperties=font)
 
         for i in range(len(self.user_names)):
-            for j in range(len(Month)):
-                text = ax.text(j, i, dat_month_chat[i][j], ha="center", va="center", color="black")
+            for j in range(len(self.Month)):
+                text = ax.text(j, i, self.dat_month_chat[i][j], ha="center", va="center", color="black")
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
@@ -56,26 +82,12 @@ class KakaoAnal(BaseAnal):
         '''
         월 별로 이용자의 말풍선 비율을 출력
         '''
-        Month = []
-        for date, _, _ in self.dat_chat:
-            if date[:7] not in Month:
-                Month.append(date[:7])
-        dat_month_chat = []
-        for user_name in self.user_names:
-            month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
-            dat_month_chat.append([month_by_name.count(month) for month in Month])
-
-        sum_by_month = [sum(dat_month_chat[i][j] for i in range(len(self.user_names))) for j in range(len(Month))]
-        dat_per = []
-        for j in range(len(self.user_names)):
-            dat_per.append([dat_month_chat[j][i] / sum_by_month[i] * 100 for i in range(len(Month))])
-
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.user_names)))
-        x = [str(month[2:]) for month in Month]
+        x = [str(month[2:]) for month in self.Month]
 
         fig, ax = plt.subplots(figsize = (10, 5))
-        ax.stackplot(x, dat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+        ax.stackplot(x, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
 
         chartBox = ax.get_position()
         ax.set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
@@ -109,32 +121,17 @@ class KakaoAnal(BaseAnal):
         '''
         요일×시간 별 말풍선 개수 출력
         '''
-        wkdays = ['월', '화', '수', '목', '금', '토', '일']
-        hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
-
-        week_days=[]
-        for line in self.dat_chat:
-            week_days.append(dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')))
-
-        dat_by_wkday = []
-        for j in range(7):
-            time_set = []
-            for i in range(len(self.dat_chat)):
-                if week_days[i] == j:
-                    time_set.append(self.dat_chat[i][0][11:13])
-            dat_by_wkday.append([time_set.count(hour) for hour in hours])
-
         fig, ax = plt.subplots(figsize = (10, 5))
-        ax.imshow(dat_by_wkday, cmap='GnBu')
+        ax.imshow(self.dat_by_wkday, cmap='GnBu')
 
-        ax.set_xticks(range(len(hours)))
+        ax.set_xticks(range(24))
         ax.set_yticks(range(7))
-        ax.set_xticklabels(hours)
-        ax.set_yticklabels(wkdays, fontproperties=font)
+        ax.set_xticklabels(range(24))
+        ax.set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font)
 
         for i in range(7):
-            for j in range(len(hours)):
-                text = ax.text(j, i, dat_by_wkday[i][j], ha="center", va="center", color="black")
+            for j in range(24):
+                text = ax.text(j, i, self.dat_by_wkday[i][j], ha="center", va="center", color="black")
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
@@ -183,3 +180,13 @@ class KakaoAnal(BaseAnal):
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
+
+
+    def chart_all(self):
+
+
+
+
+
+
+        fig, ax = plt.subplots(2, 2, figsize = (10, 5))
