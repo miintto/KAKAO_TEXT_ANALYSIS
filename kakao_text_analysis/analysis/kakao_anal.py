@@ -9,7 +9,7 @@ import matplotlib.font_manager as fm
 
 ### matplotlib에 한글 폰트 설정
 fpath = os.path.dirname(inspect.getabsfile(BaseAnal))+'/fonts/NanumGothicBold.ttf'
-font = fm.FontProperties(fname=fpath, size=10)
+font = lambda fsize : fm.FontProperties(fname=fpath, size=fsize)
 
 
 class KakaoAnal(BaseAnal):
@@ -59,22 +59,22 @@ class KakaoAnal(BaseAnal):
         '''
         월 별로 이용자의 말풍선 개수를 출력
         '''
-        fig, ax = plt.subplots(figsize = (10, 5))
+        fig, ax = plt.subplots(figsize = (12, 7))
         ax.imshow(self.dat_month_chat, cmap='GnBu')
 
         ax.set_xticks(range(len(self.Month)))
         ax.set_yticks(range(len(self.user_names)))
         ax.set_xticklabels([str(month[2:]) for month in self.Month])
-        ax.set_yticklabels(self.user_names, fontproperties=font)
+        ax.set_yticklabels(self.user_names, fontproperties=font(10))
 
         for i in range(len(self.user_names)):
             for j in range(len(self.Month)):
-                text = ax.text(j, i, self.dat_month_chat[i][j], ha="center", va="center", color="black")
+                ax.text(j, i, self.dat_month_chat[i][j], ha="center", va="center", color="black")
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        ax.set_title('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -84,20 +84,21 @@ class KakaoAnal(BaseAnal):
         '''
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.user_names)))
-        x = [str(month[2:]) for month in self.Month]
+        yy_month = [str(month[2:]) for month in self.Month]
 
-        fig, ax = plt.subplots(figsize = (10, 5))
-        ax.stackplot(x, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+        fig, ax = plt.subplots(figsize = (12, 7))
+        ax.stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+        ax.set_xticklabels(yy_month, fontproperties=font(10))
 
         chartBox = ax.get_position()
         ax.set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
         handles, labels = ax.get_legend_handles_labels()
-        plt.legend(reversed(handles), reversed(labels), prop=font, loc='center', bbox_to_anchor=(1.1, 0.5))
+        plt.legend(reversed(handles), reversed(labels), prop=font(12), loc='center', bbox_to_anchor=(1.1, 0.5))
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('월별 이용자 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        ax.set_title('월별 이용자 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -109,11 +110,11 @@ class KakaoAnal(BaseAnal):
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.user_names)))
 
-        fig, ax = plt.subplots(figsize = (10, 5))
+        fig, ax = plt.subplots(figsize = (10, 7))
         wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
-        plt.setp(texts, fontproperties=font)
+        plt.setp(texts, fontproperties=font(12))
 
-        ax.set_title('점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        ax.set_title('톡방 점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -121,22 +122,22 @@ class KakaoAnal(BaseAnal):
         '''
         요일×시간 별 말풍선 개수 출력
         '''
-        fig, ax = plt.subplots(figsize = (10, 5))
+        fig, ax = plt.subplots(figsize = (12, 7))
         ax.imshow(self.dat_by_wkday, cmap='GnBu')
 
         ax.set_xticks(range(24))
         ax.set_yticks(range(7))
         ax.set_xticklabels(range(24))
-        ax.set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font)
+        ax.set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
 
         for i in range(7):
             for j in range(24):
-                text = ax.text(j, i, self.dat_by_wkday[i][j], ha="center", va="center", color="black")
+                ax.text(j, i, self.dat_by_wkday[i][j], ha="center", va="center", color="black")
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('요일 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')', fontproperties=font)
+        ax.set_title('요일 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -176,7 +177,7 @@ class KakaoAnal(BaseAnal):
         return (ggplot(dat_by_wkday)+
                 geom_tile(aes('Hours', 'Weekdays', fill = 'Chats'))+
                 geom_text(aes('Hours', 'Weekdays', label = 'Chats'))+
-                ggtitle('"'+user_name+'" 이용자의 요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:11]+')')+
+                ggtitle('"'+user_name+'" 이용자의 요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')')+
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
@@ -184,9 +185,49 @@ class KakaoAnal(BaseAnal):
 
     def chart_all(self):
 
+        cmap = plt.get_cmap("Set3")
+        colors = cmap(range(len(self.user_names)))
+        yy_month = [str(month[2:]) for month in self.Month]
+        fig, axs = plt.subplots(2, 2, figsize = (18, 10))
+        plt.suptitle(self.title+' 종합 분석 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
 
+        ### chart_count_by_month
+        axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu')
+        axs[0, 0].set_xticks(range(len(self.Month)))
+        axs[0, 0].set_yticks(range(len(self.user_names)))
+        axs[0, 0].set_xticklabels(yy_month, fontproperties=font(10))
+        axs[0, 0].set_yticklabels(self.user_names, fontproperties=font(10))
 
+        for i in range(len(self.user_names)):
+            for j in range(len(self.Month)):
+                axs[0, 0].text(j, i, self.dat_month_chat[i][j], ha="center", va="center", color="black")
 
+        #### chart_count_by_month_rate
+        axs[1, 0].stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+        axs[1, 0].set_xticklabels(yy_month, fontproperties=font(10))
+        chartBox = axs[1, 0].get_position()
+        axs[1, 0].set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
+        handles, labels = axs[1, 0].get_legend_handles_labels()
+        axs[1, 0].legend(reversed(handles), reversed(labels), prop=font(10), loc='center', bbox_to_anchor=(1.1, 0.5))
 
+        ### chart_pie
+        wedges, texts, autotexts = axs[0, 1].pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
+        plt.setp(texts, fontproperties=font(10))
 
-        fig, ax = plt.subplots(2, 2, figsize = (10, 5))
+        ### chart_count_by_weekdays
+        axs[1, 1].imshow(self.dat_by_wkday, cmap='GnBu')
+        axs[1, 1].set_xticks(range(24))
+        axs[1, 1].set_yticks(range(7))
+        axs[1, 1].set_xticklabels(range(24), fontproperties=font(10))
+        axs[1, 1].set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
+
+        for ax in [axs[0, 0], axs[0, 1], axs[1, 0], axs[1, 1]]:
+            for edge, spine in ax.spines.items():
+                spine.set_visible(False)
+
+        axs[0, 0].set_title('월별 이용자 채팅', fontproperties=font(15))
+        axs[1, 0].set_title('월별 이용자 점유율', fontproperties=font(15))
+        axs[0, 1].set_title('톡방 점유율 (%)', fontproperties=font(15))
+        axs[1, 1].set_title('요일 시간별 채팅', fontproperties=font(15))
+
+        plt.show()
