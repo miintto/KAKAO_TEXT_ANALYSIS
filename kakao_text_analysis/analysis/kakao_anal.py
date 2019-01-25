@@ -66,6 +66,7 @@ class KakaoAnal(BaseAnal):
         ax.set_yticks(range(len(self.user_names)))
         ax.set_xticklabels([str(month[2:]) for month in self.Month])
         ax.set_yticklabels(self.user_names, fontproperties=font(10))
+        ax.set_xlabel('월 (Month)', fontproperties=font(12))
 
         for i in range(len(self.user_names)):
             for j in range(len(self.Month)):
@@ -89,6 +90,8 @@ class KakaoAnal(BaseAnal):
         fig, ax = plt.subplots(figsize = (12, 7))
         ax.stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
         ax.set_xticklabels(yy_month, fontproperties=font(10))
+        ax.set_xlabel('월 (Month)', fontproperties=font(12))
+        ax.set_ylabel('점유율 (%)', fontproperties=font(12))
 
         chartBox = ax.get_position()
         ax.set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
@@ -110,7 +113,7 @@ class KakaoAnal(BaseAnal):
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.user_names)))
 
-        fig, ax = plt.subplots(figsize = (10, 7))
+        fig, ax = plt.subplots(figsize = (8, 7))
         wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
         plt.setp(texts, fontproperties=font(12))
 
@@ -129,6 +132,8 @@ class KakaoAnal(BaseAnal):
         ax.set_yticks(range(7))
         ax.set_xticklabels(range(24))
         ax.set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
+        ax.set_xlabel('시간 (Hour)', fontproperties=font(12))
+        ax.set_ylabel('요일 (Weekday)', fontproperties=font(12))
 
         for i in range(7):
             for j in range(24):
@@ -192,15 +197,13 @@ class KakaoAnal(BaseAnal):
         plt.suptitle(self.title+' 종합 분석 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
 
         ### chart_count_by_month
-        axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu')
+        im1 = axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu')
         axs[0, 0].set_xticks(range(len(self.Month)))
         axs[0, 0].set_yticks(range(len(self.user_names)))
         axs[0, 0].set_xticklabels(yy_month, fontproperties=font(10))
         axs[0, 0].set_yticklabels(self.user_names, fontproperties=font(10))
+        fig.colorbar(im1, ax=axs[0, 0], orientation='vertical', shrink=0.5)
 
-        for i in range(len(self.user_names)):
-            for j in range(len(self.Month)):
-                axs[0, 0].text(j, i, self.dat_month_chat[i][j], ha="center", va="center", color="black")
 
         #### chart_count_by_month_rate
         axs[1, 0].stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
@@ -215,11 +218,12 @@ class KakaoAnal(BaseAnal):
         plt.setp(texts, fontproperties=font(10))
 
         ### chart_count_by_weekdays
-        axs[1, 1].imshow(self.dat_by_wkday, cmap='GnBu')
+        im2 = axs[1, 1].imshow(self.dat_by_wkday, cmap='GnBu')
         axs[1, 1].set_xticks(range(24))
         axs[1, 1].set_yticks(range(7))
         axs[1, 1].set_xticklabels(range(24), fontproperties=font(10))
         axs[1, 1].set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
+        fig.colorbar(im2, ax=axs[1, 1], orientation='horizontal', fraction=.1, shrink=0.5)
 
         for ax in [axs[0, 0], axs[0, 1], axs[1, 0], axs[1, 1]]:
             for edge, spine in ax.spines.items():
