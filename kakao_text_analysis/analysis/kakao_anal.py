@@ -60,7 +60,7 @@ class KakaoAnal(BaseAnal):
         월 별로 이용자의 말풍선 개수를 출력
         '''
         fig, ax = plt.subplots(figsize = (12, 7))
-        ax.imshow(self.dat_month_chat, cmap='GnBu')
+        ax.imshow(self.dat_month_chat, cmap='GnBu', aspect='auto')
 
         ax.set_xticks(range(len(self.Month)))
         ax.set_yticks(range(len(self.user_names)))
@@ -126,7 +126,7 @@ class KakaoAnal(BaseAnal):
         요일×시간 별 말풍선 개수 출력
         '''
         fig, ax = plt.subplots(figsize = (12, 7))
-        ax.imshow(self.dat_by_wkday, cmap='GnBu')
+        ax.imshow(self.dat_by_wkday, cmap='GnBu', aspect='auto')
 
         ax.set_xticks(range(24))
         ax.set_yticks(range(7))
@@ -197,7 +197,7 @@ class KakaoAnal(BaseAnal):
         plt.suptitle(self.title+' 종합 분석 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
 
         ### chart_count_by_month
-        im1 = axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu')
+        im1 = axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu', aspect='auto')
         axs[0, 0].set_xticks(range(len(self.Month)))
         axs[0, 0].set_yticks(range(len(self.user_names)))
         axs[0, 0].set_xticklabels(yy_month, fontproperties=font(10))
@@ -218,7 +218,7 @@ class KakaoAnal(BaseAnal):
         plt.setp(texts, fontproperties=font(10))
 
         ### chart_count_by_weekdays
-        im2 = axs[1, 1].imshow(self.dat_by_wkday, cmap='GnBu')
+        im2 = axs[1, 1].imshow(self.dat_by_wkday, cmap='GnBu', aspect='auto')
         axs[1, 1].set_xticks(range(24))
         axs[1, 1].set_yticks(range(7))
         axs[1, 1].set_xticklabels(range(24), fontproperties=font(10))

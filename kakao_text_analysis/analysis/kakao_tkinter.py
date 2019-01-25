@@ -65,9 +65,6 @@ class KakaoTkinter:
 
     def open_file(self):
         file_root = self.file_root.get()
-        ######## --DELETE -- ########
-        file_root = '/home/minjae/다운로드/KakaoTalkChats (2).txt'
-        ###############################
         try:
             f = open(file_root, 'r', encoding='utf-8-sig')
             self.raw_text = f.readlines()
