@@ -12,7 +12,6 @@ class BaseAnal:
     '''
     def __init__(self, raw_text):
         self.raw_text = raw_text
-        self.user_names = []
 
 
     def initialize(self):
@@ -96,13 +95,16 @@ class BaseAnal:
         names = []
         for line in self.dat_chat:
             names.append(line[1])
+
+        user_names = []
         for name in names:
-            if not (name in self.user_names):
-                self.user_names.append(name)
+            if not (name in user_names):
+                user_names.append(name)
         try:
-            self.user_names.remove('')
+            user_names.remove('')
         except:
             pass
+        self.user_names = user_names
 
 
     def _sort_names(self):
