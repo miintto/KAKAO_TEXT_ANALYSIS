@@ -6,12 +6,10 @@
 
 * 다음 라이브러리 설치가 요구됩니다.
 ~~~
-pip install pandas #dataframe 가공 및 편집
-pip install plotnine #그래프 생성
-apt-get install python-tk #그래픽 출력
+apt-get install python3-matplotlib # 그래프 출력
+apt-get install python-tk # UI 관련
 ~~~
-  pandas : <https://pandas.pydata.org>  
-  plotnine : <https://plotnine.readthedocs.io/en/stable/>  
+  matplotlib : <https://matplotlib.org>  
   tkinter : <https://tkdocs.com/index.html>
 
 ## 2. 실행
@@ -42,17 +40,17 @@ Window : C:\\\\Users\\\\Minjae\\\\Downloads\\\\KakaoTalkChats.txt
 yyyy-mm 까지만 입력하면 해당 월의 첫 날 부터 분석을 시작하며, 마찬가지로 연도만 입력하면 해당 연도의 맨 처음부터 분석을 시작하게 됩니다.
 
 ### 2.2 차트 출력
+* 종합 분석
+<img src="./img/kakao_text_analysis_img_9.PNG">
+
 * 월별 이용자 채팅
-<img src="./img/kakao_text_analysis_img_1.png">
+<img src="./img/kakao_text_analysis_img_1_2.png">
 
 * 월별 이용자 점유율
-<img src="./img/kakao_text_analysis_img_2.png">
+<img src="./img/kakao_text_analysis_img_2_2.png">
 
 * 전체기간 이용자 점유율
-<img src="./img/kakao_text_analysis_img_3.png">
+<img src="./img/kakao_text_analysis_img_3_2.png">
 
 * 요일 시간별 채팅
-<img src="./img/kakao_text_analysis_img_4.png">
-
-* 해당 이용자의 요일 시간별 채팅 (아직 제작중...)
-<img src="./img/kakao_text_analysis_img_5.png">
+<img src="./img/kakao_text_analysis_img_4_2.png">
