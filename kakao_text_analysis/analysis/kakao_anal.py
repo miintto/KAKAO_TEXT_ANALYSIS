@@ -20,41 +20,6 @@ class KakaoAnal(BaseAnal):
         super().__init__(raw_text)
 
 
-    def analysis(self):
-        Month = []
-        for date, _, _ in self.dat_chat:
-            if date[:7] not in Month:
-                Month.append(date[:7])
-        self.Month = Month
-
-        dat_month_chat = []
-        for user_name in self.user_names:
-            month_by_name = [date[:7] for date, name, _ in self.dat_chat if name==user_name]
-            dat_month_chat.append([month_by_name.count(month) for month in Month])
-        self.dat_month_chat = dat_month_chat
-
-        sum_by_month = [sum(dat_month_chat[i][j] for i in range(len(self.user_names))) for j in range(len(Month))]
-        dat_month_chat_per = []
-        for j in range(len(self.user_names)):
-            dat_month_chat_per.append([dat_month_chat[j][i] / sum_by_month[i] * 100 for i in range(len(Month))])
-        self.dat_month_chat_per = dat_month_chat_per
-
-        wkdays = ['월', '화', '수', '목', '금', '토', '일']
-        hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
-        week_days=[]
-        for line in self.dat_chat:
-            week_days.append(dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')))
-
-        dat_by_wkday = []
-        for j in range(7):
-            time_set = []
-            for i in range(len(self.dat_chat)):
-                if week_days[i] == j:
-                    time_set.append(self.dat_chat[i][0][11:13])
-            dat_by_wkday.append([time_set.count(hour) for hour in hours])
-        self.dat_by_wkday = dat_by_wkday
-
-
     def chart_count_by_month(self):
         '''
         월 별로 이용자의 말풍선 개수를 출력
@@ -204,7 +169,6 @@ class KakaoAnal(BaseAnal):
         axs[0, 0].set_yticklabels(self.user_names, fontproperties=font(10))
         fig.colorbar(im1, ax=axs[0, 0], orientation='vertical', shrink=0.5)
 
-
         #### chart_count_by_month_rate
         axs[1, 0].stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
         axs[1, 0].set_xticklabels(yy_month, fontproperties=font(10))
@@ -233,5 +197,4 @@ class KakaoAnal(BaseAnal):
         axs[1, 0].set_title('월별 이용자 점유율', fontproperties=font(15))
         axs[0, 1].set_title('톡방 점유율 (%)', fontproperties=font(15))
         axs[1, 1].set_title('요일 시간별 채팅', fontproperties=font(15))
-
         plt.show()

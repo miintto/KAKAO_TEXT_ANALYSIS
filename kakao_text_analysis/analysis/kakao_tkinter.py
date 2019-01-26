@@ -14,7 +14,7 @@ class KakaoTkinter:
 
 
     def run(self):
-        self.root.title('kakao text analysis')
+        self.root.title('카카오톡 대화 분석 - kakao text analysis')
 
         self.file_root = StringVar(self.root, value='')
         self.start_date = StringVar(self.root, value='')
@@ -57,8 +57,10 @@ class KakaoTkinter:
         self.buttun_5.grid(row=12, column=1)
         self.buttun_6 = Button(self.root, text = '요일 시간별 채팅', width=25, command = self.chart_count_by_weekdays)
         self.buttun_6.grid(row=13, column=1)
-        self.label_blk2 = Label(self.root, text = '', height=2)
-        self.label_blk2.grid(row=14, column=2)
+        self.label_blk2 = Label(self.root, text = '')
+        self.label_blk2.grid(row=14, column=0)
+        self.label_blk3 = Label(self.root, text = 'Ceate  by  miintto  -  2019  -  [https://github.com/miintto/KAKAO_TEXT_ANALYSIS] ', height=1)
+        self.label_blk3.grid(row=15, column=0, columnspan=3)
 
         self.root.mainloop()
 
@@ -67,7 +69,8 @@ class KakaoTkinter:
         file_root = self.file_root.get()
         try:
             f = open(file_root, 'r', encoding='utf-8-sig')
-            self.raw_text = f.readlines()
+            raw_text = f.readlines()
+            self.kakao = KakaoAnal(raw_text)
             self.label_1.configure(text='텍스트 파일 경로 :  - 파일을 성공적으로 불러왔습니다.')
             self.is_open_text_file = True
         except:
@@ -78,7 +81,7 @@ class KakaoTkinter:
         if not self.is_open_text_file:
             messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
         else:
-            self.kakao = KakaoAnal(self.raw_text)
+            self.kakao.initialize()
             start_line = -1
             start_date = self.start_date.get()
             for i in range(len(self.kakao.dat_chat)):
@@ -90,8 +93,6 @@ class KakaoTkinter:
             else:
                 self.is_find_date = True
                 self.kakao.dat_chat = self.kakao.dat_chat[start_line:]
-                self.kakao.find_names()
-                self.kakao.sort_names()
                 self.kakao.analysis()
                 self.label_3.configure(text='시작할 날짜 :  - 분석 완료!')
 
