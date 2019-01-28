@@ -40,7 +40,7 @@ class KakaoAnal(BaseAnal):
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('월별 이용자 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        ax.set_title('월별 이용자 채팅 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -53,20 +53,29 @@ class KakaoAnal(BaseAnal):
         yy_month = [str(month[2:]) for month in self.Month]
 
         fig, ax = plt.subplots(figsize = (12, 7))
-        ax.stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
-        ax.set_xticklabels(yy_month, fontproperties=font(10))
+        if len(yy_month)==1:
+            dat_month_chat_per = [per[0] for per in self.dat_month_chat_per]
+            cumsum = [sum(dat_month_chat_per[i+1:]) for i in range(len(self.user_names))]
+            for i in range(len(self.user_names)):
+                ax.bar(yy_month, dat_month_chat_per[i], color = colors[i], bottom=cumsum[i])
+            plt.legend(self.user_names, prop=font(12), loc='center', bbox_to_anchor=(1.1, 0.5))
+
+        else:
+            ax.stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+            ax.set_xticklabels(yy_month, fontproperties=font(10))
+            handles, labels = ax.get_legend_handles_labels()
+            plt.legend(reversed(handles), reversed(labels), prop=font(12), loc='center', bbox_to_anchor=(1.1, 0.5))
+
         ax.set_xlabel('월 (Month)', fontproperties=font(12))
         ax.set_ylabel('점유율 (%)', fontproperties=font(12))
 
         chartBox = ax.get_position()
         ax.set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
-        handles, labels = ax.get_legend_handles_labels()
-        plt.legend(reversed(handles), reversed(labels), prop=font(12), loc='center', bbox_to_anchor=(1.1, 0.5))
 
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('월별 이용자 점유율 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        ax.set_title('월별 이용자 점유율 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -82,7 +91,7 @@ class KakaoAnal(BaseAnal):
         wedges, texts, autotexts = ax.pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
         plt.setp(texts, fontproperties=font(12))
 
-        ax.set_title('톡방 점유율 (%) ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        ax.set_title('톡방 점유율 (%) ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -107,7 +116,7 @@ class KakaoAnal(BaseAnal):
         for edge, spine in ax.spines.items():
             spine.set_visible(False)
 
-        ax.set_title('요일 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        ax.set_title('요일 시간별 채팅 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
 
@@ -147,10 +156,47 @@ class KakaoAnal(BaseAnal):
         return (ggplot(dat_by_wkday)+
                 geom_tile(aes('Hours', 'Weekdays', fill = 'Chats'))+
                 geom_text(aes('Hours', 'Weekdays', label = 'Chats'))+
-                ggtitle('"'+user_name+'" 이용자의 요일, 시간별 채팅 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')')+
+                ggtitle('"'+user_name+'" 이용자의 요일, 시간별 채팅 ('+self.start_date+' ~ '+self.save_date[:10]+')')+
                 scale_fill_gradient2(high = 'steelblue', low = 'white')+
                 theme(figure_size = (12, 5), plot_title = element_text(size=20), text = element_text(fontproperties=font))
                )
+
+
+    def chart_count_word_by_user(self, word):
+        user_set = []
+        for _, name, chat in self.dat_chat:
+            if word in chat:
+                user_set.append(name)
+
+        dat_count_user_by_word = [user_set.count(name) for name in self.user_names]
+        user_names = sorted(self.user_names, key=lambda i : dat_count_user_by_word[self.user_names.index(i)], reverse=True)
+        dat_count_user_by_word.sort(reverse=True)
+
+        try:
+            user_len = dat_count_user_by_word.index(0)
+            dat_count_user_by_word = dat_count_user_by_word[:user_len]
+            user_names = user_names[:user_len]
+        except:
+            pass
+
+        cmap = plt.get_cmap("Set3")
+        colors = cmap(range(len(user_names)))
+
+        fig, ax = plt.subplots(figsize = (12, 7))
+        ax.bar(range(len(user_names)), dat_count_user_by_word, color=colors)
+        ax.set_xticks(range(len(user_names)))
+        ax.set_xticklabels(user_names, fontproperties=font(12))
+
+        rects = ax.patches
+        for rect, label in zip(rects, dat_count_user_by_word):
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2, height, label, ha='center')
+
+        for edge, spine in ax.spines.items():
+            spine.set_visible(False)
+
+        ax.set_title('\''+word+'\' 단어 사용 빈도 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        plt.show()
 
 
     def chart_all(self):
@@ -159,7 +205,7 @@ class KakaoAnal(BaseAnal):
         colors = cmap(range(len(self.user_names)))
         yy_month = [str(month[2:]) for month in self.Month]
         fig, axs = plt.subplots(2, 2, figsize = (18, 10))
-        plt.suptitle(self.title+' 종합 분석 ('+self.dat_chat[0][0][:11]+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
+        plt.suptitle(self.title+' 종합 분석 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
 
         ### chart_count_by_month
         im1 = axs[0, 0].imshow(self.dat_month_chat, cmap='GnBu', aspect='auto')
@@ -170,12 +216,20 @@ class KakaoAnal(BaseAnal):
         fig.colorbar(im1, ax=axs[0, 0], orientation='vertical', shrink=0.5)
 
         #### chart_count_by_month_rate
-        axs[1, 0].stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
-        axs[1, 0].set_xticklabels(yy_month, fontproperties=font(10))
+        if len(yy_month)==1:
+            dat_month_chat_per = [per[0] for per in self.dat_month_chat_per]
+            cumsum = [sum(dat_month_chat_per[i+1:]) for i in range(len(self.user_names))]
+            for i in range(len(self.user_names)):
+                axs[1, 0].bar(yy_month, dat_month_chat_per[i], color = colors[i], bottom=cumsum[i])
+            axs[1, 0].legend(self.user_names, prop=font(10), loc='center', bbox_to_anchor=(1.1, 0.5))
+        else:
+            axs[1, 0].stackplot(yy_month, self.dat_month_chat_per[::-1], labels=self.user_names[::-1], colors=colors[::-1])
+            axs[1, 0].set_xticklabels(yy_month, fontproperties=font(10))
+            handles, labels = axs[1, 0].get_legend_handles_labels()
+            axs[1, 0].legend(reversed(handles), reversed(labels), prop=font(10), loc='center', bbox_to_anchor=(1.1, 0.5))
+
         chartBox = axs[1, 0].get_position()
         axs[1, 0].set_position([chartBox.x0, chartBox.y0, chartBox.width*0.9, chartBox.height])
-        handles, labels = axs[1, 0].get_legend_handles_labels()
-        axs[1, 0].legend(reversed(handles), reversed(labels), prop=font(10), loc='center', bbox_to_anchor=(1.1, 0.5))
 
         ### chart_pie
         wedges, texts, autotexts = axs[0, 1].pie(self.user_chat, labels=self.user_names, autopct='%1.2f%%', colors=colors)
