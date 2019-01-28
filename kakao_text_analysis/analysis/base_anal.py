@@ -53,6 +53,7 @@ class BaseAnal:
     def analysis(self):
         self._find_names()
         self._sort_names()
+        self.start_date = self.dat_chat[0][0][:11]
 
         Month = []
         for date, _, _ in self.dat_chat:
