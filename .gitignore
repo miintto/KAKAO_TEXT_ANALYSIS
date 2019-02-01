@@ -4,3 +4,4 @@
 **/__pycashe__
 *.ipynb
 *.pyc
+*.log
