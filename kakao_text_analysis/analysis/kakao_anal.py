@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import inspect
-from  . import BaseAnal
+from  . import BaseAnal, KakaoKoNLPy
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -251,4 +250,13 @@ class KakaoAnal(BaseAnal):
         axs[1, 0].set_title('월별 이용자 점유율', fontproperties=font(15))
         axs[0, 1].set_title('톡방 점유율 (%)', fontproperties=font(15))
         axs[1, 1].set_title('요일 시간별 채팅', fontproperties=font(15))
+        plt.show()
+
+    def word_cloud(self, user_name):
+        konlpy = KakaoKoNLPy(self.dat_chat)
+        array = konlpy.word_cloud(user_name)
+
+        fig = plt.figure(figsize=(10, 10))
+        plt.imshow(array, interpolation="bilinear")
+        plt.axis("off")
         plt.show()
