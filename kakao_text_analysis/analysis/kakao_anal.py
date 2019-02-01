@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
 ### matplotlib에 한글 폰트 설정
-fpath = os.path.dirname(inspect.getabsfile(BaseAnal))+'/fonts/NanumGothicBold.ttf'
+fpath = os.path.dirname(__file__)+'/fonts/NanumGothicBold.ttf'
 font = lambda fsize : fm.FontProperties(fname=fpath, size=fsize)
 
 
