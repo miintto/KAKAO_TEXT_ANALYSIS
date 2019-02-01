@@ -57,12 +57,16 @@ class KakaoTkinter:
         self.buttun_5.grid(row=12, column=1)
         self.buttun_6 = Button(self.root, text = '요일 시간별 채팅', width=25, command = self.chart_count_by_weekdays)
         self.buttun_6.grid(row=13, column=1)
-        self.buttun_6 = Button(self.root, text = '시용 단어 분석', width=25, command = self.chart_count_word_by_user)
+        self.buttun_6 = Button(self.root, text = 'Word Cloud', width=25, command = self.chart_word_cloud)
         self.buttun_6.grid(row=14, column=1)
+        self.buttun_6 = Button(self.root, text = '시용 단어 분석', width=25, command = self.chart_count_word_by_user)
+        self.buttun_6.grid(row=15, column=1)
+        self.buttun_6 = Button(self.root, text = '이용자 분석', width=25, command = self.chart_by_user)
+        self.buttun_6.grid(row=16, column=1)
         self.label_blk2 = Label(self.root, text = '')
-        self.label_blk2.grid(row=15, column=0)
+        self.label_blk2.grid(row=17, column=0)
         self.label_blk3 = Label(self.root, text = ' Ceated  by  miintto  -  2019  -  [https://github.com/miintto/KAKAO_TEXT_ANALYSIS] ', height=1)
-        self.label_blk3.grid(row=16, column=0, columnspan=3)
+        self.label_blk3.grid(row=18, column=0, columnspan=3)
 
         self.root.mainloop()
 
@@ -155,6 +159,25 @@ class KakaoTkinter:
             return self.kakao.chart_all()
 
 
+    def chart_word_cloud(self):
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            return self.kakao.word_cloud()
+
+
+    def chart_by_user(self):
+        if not self.is_open_text_file:
+            messagebox.showinfo('Error', '먼저 텍스트 파일을 불러와주세요.')
+        elif not self.is_find_date:
+            messagebox.showinfo('Error', '먼저 분석을 시작할 날짜를 입력해주세요.')
+        else:
+            self.root_word = Tk()
+            ChartByUser(self.root_word, self.kakao)
+
+
 
 class WordCountTkinter(KakaoTkinter):
 
@@ -192,3 +215,42 @@ class WordCountTkinter(KakaoTkinter):
     def chart_count_word_by_user(self):
         word = self.word.get()
         return self.kakao.chart_count_word_by_user(word)
+
+
+
+class ChartByUser(KakaoTkinter):
+
+    def __init__(self, root, kakao):
+        self.root = root
+        self.kakao = kakao
+        self.run()
+
+    def run(self):
+        self.root.title('카카오톡 대화 분석 - kakao text analysis')
+
+        self.user_name = StringVar(self.root, value='')
+
+        self.label_0 = Label(self.root, text = '이용자 분석', height=2)
+        self.label_0.config(font=('', 15))
+        self.label_0.grid(row=0, column=1)
+        self.label_blk0 = Label(self.root, text = '', width=5)
+        self.label_blk0.grid(row=0, column=0)
+        self.label_blk1 = Label(self.root, text = '', width=5)
+        self.label_blk1.grid(row=0, column=2)
+
+        self.label_1 = Label(self.root, text = '분석할 이용자 이름 입력 :')
+        self.label_1.grid(row=1, column=1, sticky='w')
+        self.text_1 = Entry(self.root, width=30, textvariable = self.user_name)
+        self.text_1.grid(row=2, column=1)
+        self.buttun_0 = Button(self.root, text = '확인', command = self.chart_by_user)
+        self.buttun_0.grid(row=3, column=1)
+        self.label_blk2 = Label(self.root, text = '')
+        self.label_blk2.grid(row=4, column=0)
+        self.label_blk3 = Label(self.root, text = ' Ceated  by  miintto  -  2019 ', height=1)
+        self.label_blk3.grid(row=5, column=0, columnspan=3, sticky='w')
+        
+        self.root.mainloop()
+
+    def chart_by_user(self):
+        user_name = self.user_name.get()
+        return self.kakao.word_cloud_by_user(user_name)

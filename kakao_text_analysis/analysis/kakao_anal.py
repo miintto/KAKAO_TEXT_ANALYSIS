@@ -252,9 +252,21 @@ class KakaoAnal(BaseAnal):
         axs[1, 1].set_title('요일 시간별 채팅', fontproperties=font(15))
         plt.show()
 
-    def word_cloud(self, user_name):
+
+    def word_cloud(self):
         konlpy = KakaoKoNLPy(self.dat_chat)
-        array = konlpy.word_cloud(user_name)
+        array = konlpy.word_cloud()
+
+        fig = plt.figure(figsize=(12, 7))
+        plt.imshow(array, interpolation="bilinear")
+        plt.axis("off")
+        plt.suptitle('주 사용 단어 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
+        plt.show()
+
+
+    def word_cloud_by_user(self, user_name):
+        konlpy = KakaoKoNLPy(self.dat_chat)
+        array = konlpy.word_cloud_by_user(user_name)
 
         fig = plt.figure(figsize=(10, 10))
         plt.imshow(array, interpolation="bilinear")
