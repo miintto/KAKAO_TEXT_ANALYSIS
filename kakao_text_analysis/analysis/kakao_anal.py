@@ -264,9 +264,6 @@ class KakaoAnal(BaseAnal):
         plt.show()
 
     def _analysis_by_user(self, user_name):
-        # konlpy = KakaoKoNLPy(self.dat_chat)
-        # array = konlpy.word_cloud_by_user(user_name)
-
         self.target_name = [name for name in self.user_names if name != user_name]
         month_by_user = []
         dat_user_chat_group = []
@@ -314,6 +311,8 @@ class KakaoAnal(BaseAnal):
 
     def chart_all_by_user(self, user_name):
         self._analysis_by_user(user_name)
+        konlpy = KakaoKoNLPy(self.dat_chat)
+        array = konlpy.word_cloud_by_user(user_name)
 
         cmap = plt.get_cmap("Set3")
         colors = cmap(range(len(self.target_name)))
@@ -329,6 +328,8 @@ class KakaoAnal(BaseAnal):
         axs[0, 1].set_xticks(range(len(self.target_name)))
         axs[0, 1].set_xticklabels(self.target_name, fontproperties=font(10))
 
+        axs[1, 0].imshow(array, interpolation="bilinear")
+
         im2 = axs[1, 1].imshow(self.dat_by_wkday_by_user, cmap='GnBu', aspect='auto')
         axs[1, 1].set_xticks(range(24))
         axs[1, 1].set_yticks(range(7))
@@ -336,7 +337,12 @@ class KakaoAnal(BaseAnal):
         axs[1, 1].set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
         fig.colorbar(im2, ax=axs[1, 1], orientation='horizontal', fraction=.1, shrink=0.5)
 
+        for ax in [axs[0, 0], axs[0, 1], axs[1, 0], axs[1, 1]]:
+            for edge, spine in ax.spines.items():
+                spine.set_visible(False)
+
         axs[0, 0].set_title('\''+user_name+'\' 님의 월별 대화량', fontproperties=font(15))
         axs[0, 1].set_title('\''+user_name+'\' 님과 대화한 유저', fontproperties=font(15))
+        axs[1, 0].set_title('\''+user_name+'\' 님의 주 사용 단어', fontproperties=font(15))
         axs[1, 1].set_title('\''+user_name+'\' 님의 요일 시간별 채팅', fontproperties=font(15))
         plt.show()

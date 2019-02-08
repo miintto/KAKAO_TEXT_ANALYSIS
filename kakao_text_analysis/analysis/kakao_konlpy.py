@@ -56,7 +56,7 @@ class KakaoKoNLPy:
             if len(w)>1:
                 word_dict[w] = word.count(w)
 
-        wordcloud = WordCloud(font_path = fpath, width = 800, height = 800, background_color="white")
+        wordcloud = WordCloud(font_path = fpath, width = 800, height = 500, background_color="white")
         wordcloud = wordcloud.generate_from_frequencies(word_dict)
         array = wordcloud.to_array()
         return array

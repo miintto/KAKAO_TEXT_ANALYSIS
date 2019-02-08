@@ -257,3 +257,4 @@ class ChartByUser(KakaoTkinter):
             messagebox.showinfo('Error', '해당 이용자를 찾을 수 없습니다.')
         else:
             return self.kakao.chart_all_by_user(user_name)
+ 
