@@ -253,4 +253,4 @@ class ChartByUser(KakaoTkinter):
 
     def chart_by_user(self):
         user_name = self.user_name.get()
-        return self.kakao.word_cloud_by_user(user_name)
+        return self.kakao.chart_all_by_user(user_name)

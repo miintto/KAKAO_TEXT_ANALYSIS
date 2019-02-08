@@ -263,12 +263,80 @@ class KakaoAnal(BaseAnal):
         plt.suptitle('주 사용 단어 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(16))
         plt.show()
 
+    def _analysis_by_user(self, user_name):
+        # konlpy = KakaoKoNLPy(self.dat_chat)
+        # array = konlpy.word_cloud_by_user(user_name)
 
-    def word_cloud_by_user(self, user_name):
-        konlpy = KakaoKoNLPy(self.dat_chat)
-        array = konlpy.word_cloud_by_user(user_name)
+        self.target_name = [name for name in self.user_names if name != user_name]
+        month_by_user = []
+        dat_user_chat_group = []
+        user_dict = {name:0 for name in self.user_names}
+        pre_date = date_1 = dt.datetime(1990, 1, 1, 0, 0)
+        for date, name, _ in self.dat_chat:
+            if name == user_name:
+                month_by_user.append(date[:7])
+            dt_date = dt.datetime.strptime(date, "%Y-%m-%d %H:%M")
+            time_gap = (dt_date - pre_date)
+            if ((time_gap.days>1) | (time_gap.seconds>60*10)):
+                if user_dict[user_name]>0:
+                    dat_user_chat_group.append(user_dict)
+                user_dict = {name:0 for name in self.user_names}
+            if name=='':
+                pass
+            else:
+                user_dict[name]+=1
+            pre_date = dt_date
+        if user_dict[user_name]>0:
+            dat_user_chat_group.append(user_dict)
 
-        fig = plt.figure(figsize=(10, 10))
-        plt.imshow(array, interpolation="bilinear")
-        plt.axis("off")
+        self.dat_month_chat_by_user = [month_by_user.count(month) for month in self.Month]
+
+        self.sum_chat = []
+        for name in self.target_name:
+            self.sum_chat.append(sum([line[name] for line in dat_user_chat_group]))
+
+        wkdays = ['월', '화', '수', '목', '금', '토', '일']
+        hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
+        week_days=[]
+        for line in self.dat_chat:
+            if line[1] == user_name:
+                week_days.append([dt.datetime.weekday(dt.datetime.strptime(line[0], '%Y-%m-%d %H:%M')), line[0][11:13]])
+
+        dat_by_wkday_by_user = []
+        for j in range(7):
+            time_set = []
+            for wkd, time in week_days:
+                if wkd == j:
+                    time_set.append(time)
+            dat_by_wkday_by_user.append([time_set.count(hour) for hour in hours])
+        self.dat_by_wkday_by_user = dat_by_wkday_by_user
+
+
+    def chart_all_by_user(self, user_name):
+        self._analysis_by_user(user_name)
+
+        cmap = plt.get_cmap("Set3")
+        colors = cmap(range(len(self.target_name)))
+
+        fig, axs = plt.subplots(2, 2, figsize=(18, 10))
+        plt.suptitle('\''+user_name+'\' 님 종합 분석 ('+self.start_date+' ~ '+self.save_date[:10]+')', fontproperties=font(20))
+
+        axs[0, 0].bar(self.Month, self.dat_month_chat_by_user)
+        axs[0, 0].set_xticks(range(len(self.Month)))
+        axs[0, 0].set_xticklabels(self.Month, fontproperties=font(10))
+
+        axs[0, 1].bar(self.target_name, self.sum_chat, color = colors)
+        axs[0, 1].set_xticks(range(len(self.target_name)))
+        axs[0, 1].set_xticklabels(self.target_name, fontproperties=font(10))
+
+        im2 = axs[1, 1].imshow(self.dat_by_wkday_by_user, cmap='GnBu', aspect='auto')
+        axs[1, 1].set_xticks(range(24))
+        axs[1, 1].set_yticks(range(7))
+        axs[1, 1].set_xticklabels(range(24), fontproperties=font(10))
+        axs[1, 1].set_yticklabels(['월', '화', '수', '목', '금', '토', '일'], fontproperties=font(10))
+        fig.colorbar(im2, ax=axs[1, 1], orientation='horizontal', fraction=.1, shrink=0.5)
+
+        axs[0, 0].set_title('\''+user_name+'\' 님의 월별 대화량', fontproperties=font(15))
+        axs[0, 1].set_title('\''+user_name+'\' 님과 대화한 유저', fontproperties=font(15))
+        axs[1, 1].set_title('\''+user_name+'\' 님의 요일 시간별 채팅', fontproperties=font(15))
         plt.show()
